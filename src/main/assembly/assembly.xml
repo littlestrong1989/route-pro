@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/3.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="classpath:maven.apache.org/plugins/maven-assembly-plugin/assembly/3.0.0 classpath:maven.apache.org/xsd/assembly-3.0.0.xsd">
+    <id>assembly-fvproute-sub</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/bin</directory>
+            <fileMode>755</fileMode>
+            <excludes>
+				<exclude>*.classpath</exclude>
+			</excludes>
+			<outputDirectory>/bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/config</directory>
+            <fileMode>755</fileMode>
+            <outputDirectory>/config</outputDirectory>
+            <directoryMode>0744</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+    </fileSets>
+</assembly>

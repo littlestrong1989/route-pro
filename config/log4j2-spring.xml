@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration monitorInterval="60">
+	<properties>
+		<!-- 读取系统环境变量路径 -->
+		<property name="log_home">${env:LOGS_REPERTORY:-./logs}</property>
+        <!-- 日志文件最小切割单位 值不做强制要求，建议300MB 改为50MB -->
+        <property name="every_file_size">10MB</property>
+        <!-- *必须并强制遵守 日志文件的编码 -->
+        <property name="log_charset">UTF-8</property>
+        <!-- 时间|日志级别|线程id|类名|方法名|日志信息 -->
+        <!-- <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS}|%-5level|%t|%logger|%M|%m%n</property> -->
+        <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS}|%-5level|%t|%m%n</property>
+	</properties>
+	<appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${log_pattern}"/>
+		</Console>
+
+        <RollingFile name="ERROR" fileName="${log_home}/error.log" filePattern="${log_home}/error-%d{yyyy-MM-dd}-%i.log">
+        	<PatternLayout charset="${log_charset}" pattern="${log_pattern}" />
+        	<Filters>
+				<ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="${every_file_size}"/>
+			</Policies>
+			<!-- 日志文件上限为1000个，默认是7个 -->
+			<DefaultRolloverStrategy max="1000" />
+        </RollingFile>
+        
+        <RollingFile name="INFO" fileName="${log_home}/info.log" filePattern="${log_home}/info-%d{yyyy-MM-dd}-%i.log">
+        	<PatternLayout charset="${log_charset}" pattern="${log_pattern}" />
+        	<Filters>
+				<ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="${every_file_size}"/>
+			</Policies>
+			<!-- 日志文件上限为1000个，默认是7个 -->
+			<DefaultRolloverStrategy max="1000" />
+        </RollingFile>
+	</appenders>
+	
+	<loggers>
+		<!-- 配置第三方日志输出 -->
+		<!-- 
+		<Logger additivity="false" name="SYSTEM" level="ERROR">
+			<AppenderRef ref="ERROR" />
+		</Logger>
+		 -->
+		<Logger additivity="false" name="INFO" level="INFO">
+			<AppenderRef ref="INFO" />
+		</Logger>
+		<Logger additivity="false" name="org.apache" level="ERROR">
+			<AppenderRef ref="console" />
+		</Logger>
+		<!-- 
+		<Logger additivity="false" name="com.alibaba.dubbo.common.threadpool.monitor.MonitorPoolRunnable" level="INFO">
+			<AppenderRef ref="POOL" />
+		</Logger>
+		<Logger additivity="false" name="com.alibaba.dubbo.monitor.dubbo.sfextend.SfMonitorExtend" level="INFO">
+			<AppenderRef ref="MONITOR" />
+		</Logger>
+		 -->
+		<!-- 在开发和测试环境启用,输出sql -->
+		<!-- <Logger additivity="true" name="com.tosserver.dao.mapper" level="DEBUG"></Logger> -->
+		<!-- 配置日志的根节点 -->
+		<Root level="ALL" includeLocation="true">
+			<!--开发过程可以开启，生产要求屏蔽 -->
+			<AppenderRef ref="console" />
+			<AppenderRef ref="ERROR" />
+			<AppenderRef ref="INFO" />
+		</Root>
+	</loggers>
+</configuration>
